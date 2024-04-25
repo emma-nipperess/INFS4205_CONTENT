@@ -6,11 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COMP4702</title>
     <link rel="stylesheet" href="https://emma-nipperess.github.io/COMP4702_CONTENT/style.css">
+    <link rel="stylesheet" href="style.css">
     
 </head>
 <body>
     <div id="sideNav" class="sidenav">
-        <a href="#module1">VA File</a>
+        <a href="#module7">Spatiotemporal Data</a>
+        <a href="#module1">Spacial Query Processing</a>
+        <a href="#module9">Multimedia DBMS</a>
     </div>
     <div id="minecraftPopup" class="minecraft-popup">
         <span class="close-btn" onclick="closePopup()">&times;</span>
@@ -19,6 +22,354 @@
     </div>
     
     <div class="main">
+        <div id="module7" class="content cloud">
+            <h2> Spatiotemporal Data</h2>
+            <h3>The Temporal Dimension</h3>
+
+            <p>Location and time are crucial yet challenging dimensions for traditional Relational Database Management Systems (RDBMS) to handle efficiently.
+                 Unlike other data dimensions, the temporal aspect cannot be seen just as another dimension due to its unique nature. 
+                 Operations and queries involving time require specialized handling and storage solutions, particularly in the context of spatiotemporal data.</p>
+
+            <h3>Spatiotemporal Database</h3>
+            <p>A spatiotemporal database manages data that changes over time and space, providing a means to store, query, and manage data whose geometrical properties evolve.
+           </p>
+            <p>Examples:</p>
+            <ul>
+                <li> tracking climate changes </li>
+                <li> managing transportation logistics </li>
+                <li> animating characters in movies </li>
+            </ul>
+
+            <h3>Trajectory Data</h3>
+           
+            <p><b><i>Data that record the locations of a moving object over time in a geographical space</i></b></p>
+            <p>Trajectory data captures the movement of an object through space over time. This data typically consists of a series of locations and timestamps. 
+                It's used extensively in navigation systems, where each data point represents a location at a specific time, forming a trajectory that describes an
+                 object’s route.</p>
+
+            <dl>
+                <dt>moving objects</dt>
+                <dd>data concerns current and near future locations</dd>
+                <dt>spatial trajectory</dt>
+                <dd>data concerns the movement history of moving objecst </dd>
+            </dl>
+            
+            <p> a trajectory without time dimension == route</p>
+            <h4> Dimensions of Trajectory Data</h4>
+            <p><b>basic</b></p>
+            <ul>
+                <li> spatial dimension: (locations)</li>
+                <li> temporal dimension: (timestamps) </li>
+                <li> attribute dimension (area of interest) </li>
+            </ul>
+            <p><b>other</b></p>
+            <ul>
+                <li>entity</li>
+                <li>environments (road network, floor plans)</li>
+                <li> semantic (what activies at a location or time)</li>
+            </ul>
+
+            <h3>Applications of Trajectory Data</h3>
+            <p>Trajectory data supports various applications from urban planning to fleet management and helps in analyzing movement patterns.</p>
+            <ul>
+                <li>optimizing logistics </li>
+                <li> enhancing traffic management</li>
+                <li> personalizing travel recommendations</li>
+            </ul>
+             
+            <h3> Spatiotemporal Queries</h3>
+            <ul>
+                <li>Query can take a point/range as input
+                    <ul>
+                        <li>(Aggregate query): “find how many objects passed through area Q during time interval T”</li>
+                    </ul>
+                </li>
+                <li>Query can take a point/range as input
+                    <ul>
+                        <li> <i>find nearest POI for given trajectory</i></li>
+                        <li> <i> find top-k similar trajectories to a given trajectory</i></li>
+                    </ul>
+                </li>
+            </ul>
+            <h4> Complex queries</h4>
+            <h5> Monitoring queries</h5>
+            <ul> 
+                <li> <i> where is nearest petrol station</i></li>
+                <li> Static nearest neighbor query (concerning a given location) </li>
+                <li> Moving Nearest Neighbour (NN) query (Concerning the current location which is moving)
+                </li>
+            </ul>
+            <h3> Indexing for Spatiotemporal Data</h3>
+            <table>
+                <tr>
+                    <th>name</th>
+                    <th>pros</th>
+                    <th>limitations</th>
+                </tr>
+                <tr>
+                    <th>R-tree</th>
+                    <td> 
+                        <ul>
+                            <li>most efficient and widely used gp index</li>
+                            <li> MBR -> 3D cube</li>
+
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>The temporal dimension increases monotonically and unbounded –
+                                keep increasing the size of the R-tree (Long lived objects will
+                                have very long cubes,
+                                difficult to cluster)</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th>3D R-tree</th>
+                    <td><img src="media/3D-R-tree.png" style="width: 40%;">
+                    <p>good for coordinate queries</p></td>
+                    <td>
+                        <ul>
+                            <li> not effective to use boxes to approximate lines (wasted space + overlapping)</li>
+                            <li> not efficient for trajectory based queries (small cube vs big cube)</li>
+                            <li> works only for discrete changes</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th> Snapshot-based index</th>
+                    <td><p>efficient in range query</p>
+                        <img src="media/snapshot.png" width="80%">
+                    </td>
+                    <td><p>inefficient in space consumption</p></td>
+                </tr>
+                <tr >
+                    <th style="border-bottom: none;">Hisorical R-Tree (implementation of above)</th>
+                    <td style="border-bottom: none;">
+                        <p>an R-tree is maintained for each timestamp in history -> trees at consecutive timestamps may share branches to save space
+                        </p>
+                        <ul>
+                            <li>HR-trees answer timestamp queries very efficiently</li>
+                        </ul>
+                    </td>
+                    <td style="border-bottom: none;"><p>Not quite efficient:</p>
+                        <ul>
+                            <li> expensive space consumption (A node needs to be duplicated even when one object moves)</li>
+                            <li> interval query processing is inefficient</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="3" style="text-align: center; border-top: none;"><img src="media/HR-tree.png" width="50%"></th>
+                </tr>
+                <tr>
+                    <th> Continously Moving Objects</th>
+                    <td><p>For objects constantly moving - constant velocity (speed and direction). position calculated with basic motion function l(t) = l(t_0) + V(t - t_0). Update 
+                        only required when velocity changes some how.</p> 
+                    </td>
+                    <td> <p>Restricted to mostly linear motion (i just made this up may not actually be true)</p> </td>
+                </tr>
+                <tr>
+                    <th>TPR-tree (time parameterized)</th>
+                    <td><p>coordinates are functions of time. Use MBRs to enclose object of interest with time as param.</p>
+                        <ul>
+                            <li>TPR-tree is optimised for timestamp queries in
+                                interval [𝑇𝑐, 𝑇𝑐 + 𝐻] (H: horizon (how far tree should see in future))</li>
+                                <li> Update algorithm is same as R*-tree</li>
+                            <li>When an object is inserted or removed, the TPRtree tightens the MBR of its parent node
+                            </li>
+                        </ul>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <h3> Similarity Measures for Trajectory Data</h3>
+            <p>Spatial trajectory is object movement history in a space</p>
+            <p> Many location-update strats:
+                <ul>
+                    <li> by time, by dist, by dev</li>
+                    <li> trade off between accuracy and other overheads</li>
+
+                </ul>
+            </p>
+
+            <h5>Applications</h5>
+            <ul>
+                <li> marine animal traj</li>
+                <li> ajdust timings on a road network</li>
+                <li> sus behaviour detection</li>
+            </ul>
+            
+            <h4>Similarity Measures</h4>
+            <p>The foundation to perform trajectory-based queries and analytics</p>
+            <ul>
+                <li>Sequence-based: passing the same sequence of points</li>
+                <li> Geometry based: similar shapes?</li>
+                <li>With or without time or speed considerations</li>
+            </ul>
+
+            <p>
+                <b>Key factors to consider:</b>
+                <ul>
+                    <li> alignment of sampling points (non-uniform sampling)</li>
+                    <li> robustness to noise (to deal with data qual issues)</li>
+                </ul>
+            </p>
+
+            <dl>
+                <dt>Lock-step Euclidean Distance (LSED)</dt>
+                <dd>
+                    The 𝑘𝑡ℎ point of a trajectory is aligned to the 𝑘𝑡ℎ point of the other trajectory 
+                    <ul>
+                        <li>total distance between all pairs of corresponding points in two trajectories</li>
+                        <li>requires that two traj contain the same number of points</li>
+                    </ul>
+
+                    <b>😨 drawback of lsed 😨</b>
+                    <ul>
+                        <li> cannot find similar trajectories with different sampling rates</li>
+                        <li> sensitve to noise (acoustic???) </li>
+                    </ul>
+                    <img src="media/lsed.png" style="width: 30%;">
+                </dd>
+                <dt> Adaptive Alignment</dt>
+                <dd> <b>Dynamic time warping (DTW) distance:</b> Find the best match for every single point, even if they are sampled by
+                    different frequency
+                    <br>
+                    <b> Optimal order-aware alignment between two sequences:</b> Goal: minimize the aggregate distance between matched points
+                    <br>
+                    <b>1-to-many mapping: </b>one point in one sequence can be mapped to
+                        multiple points in another sequence
+                    <br>
+                    <br>
+                </dd>
+                
+                <dt>
+                    Dynamic Time Warping: DTW
+                </dt>
+                <dd>
+                    <p>
+                    Classic <span class="red">dynamic programming</span> algo which is useful when detecting similar trajectories with different sampling rates
+                    </p>
+                    <p> Minimize the aggregate distance between matched points</p>
+                    <p><b>minimum cost path??:</b> Path: from lower left to the upper right corner of the distance matrix that
+                        minimizes the sum of squared distances</p>
+                        <img src="media/mcp.png" width="60%">
+                </dd>
+                
+            </dl>
+            <h4> Count based similarity</h4>
+            <p>Similarity is measured by the number of ‘similar’/ ‘dissimilar’ samples
+            </p>
+            <dl>
+                <dt>
+                    LCSS: Longest Common Sub-Sequence
+                </dt>
+                <dd>
+                    <p>Adaptation of string similarity:
+                        Two locations are regarded as equal if they are ‘close’ enough
+                        (compared to a threshold)
+
+                    </p>
+                    <p>Pros: insensitve to noise</p>
+                    <p>Cons: not easy to define threshold, may return dissimilar trajectories</p>
+                    <p>Path of maximum score: 
+                        <img src="media/lcss.png" width="40%"></p>
+                    
+                </dd>
+                <dt>Edit Distance (EDR)</dt>
+                <dd> Edit distance of real sequence. Adaption from edit distance on strings:
+                    <ul>
+                        <li>number of insert,delete replace needed to convert one string into another</li>
+                        <li>two locations are not regarded as equal if they're not close enough</li>
+                        <li> every edit comes at a cost </li>
+                    </ul>
+                    <p>Value means the number of operations, not “distance between
+                        locations”</p>
+                    <p>
+                        EDR costs are thresholded to <b>0</b> if the current pair of points match, otherwise 1.
+                    </p>
+                    <p>Non-thresholded version: edit distance with real penalty (ERP)</p>
+                </dd>
+            </dl>
+            <table>
+                <tr>
+                    <th>LCSS</th>
+                    <th>Overlap</th>
+                    <th>EDR</th>
+                </tr>
+                <tr>
+                    <td> <p>lcss counts number of matched pairs</p></td>
+                    <td><p>count based, complementary to each other</p> </td>
+                    <td> <p>edr counts the cost of operations needed to fix the unmatched pairs</p></td>
+                </tr>
+            </table>
+            <h4> Continuityyyyyyyyyyyyyyyyyyyyyyyyy </h4>
+            <p>
+                So far, only seen discrete measures only - based on points in trajectory
+            </p>
+            <p>Continuous measures – based on edges in trajectory (polyline)</p>
+            <ul>
+                <li> One way distance</li>
+                <li> Locality In-between Polylines </li>
+            </ul>
+            
+            <dl>
+                <dt>
+                    One Way Distance
+                </dt>
+                <dd> OWD from T1 to T2 is:
+                    basically the area between two curves
+                    <ul>
+                        <li> Integral of the distance from points of T1 to T2</li>
+                        <li> Divided by the length of T1</li>
+                    </ul>
+                </dd>
+                <dt>
+                    Locality In-Between Polylines Distance (LIP)
+                </dt>
+                <dd>
+                    <p>Locality In-between Polylines: Two moving objects are considered spatially
+                        similar when they move close </p>
+                        <p><b>There are "bad cases" that LIP cannot handle. </b>Don't ask me what they are cause it wasn't given in the lecture so I guress i dont need to know.</b></p>
+                </dd>
+            </dl>
+
+            <h4> Spatiotemporal Distances</h4>
+            <p> Take timestamp into consideration</p>
+            <dl>
+                <dt>Synchronous Euclidean Distance</dt>
+                <dd>Euclidean distance between locations at the same time of two trajectories</dd>
+                <dt>Non-Euclidean Distance
+                </dt>
+                <dd>Road network distance (basically not "as the crow flies")</dd>
+            </dl>
+            <h3>Open Issues in Research</h3>
+            <h4>Trajectory Compression</h4>
+            <p> significant level of redundancy (espc when moving at constant speed)</p>
+            <P>data qual can be poor</P>
+            <h5>Simplification vs Compression</h5>
+            <dl>
+                <dt>Trajectory Simplification</dt>
+                <dd> Removing redundant information in a trajectory. No data loss</dd>
+                <dt>Trajectory Compression</dt>
+                <dd>Reduce amount of data without too much information loss. Fine with data loss</dd>
+
+            </dl>
+            <h5>Factors to consider</h5>
+            <ul>
+                <li> GOALS: size, quality, fitness for use, processing efficiency</li>
+                <li>Intra- inter- or knowlege-assisted</li>
+            </ul>
+            <h5>Compression with Road Network Constraints</h5>
+            <ul>
+                <li>Consider map-matching and trajectory compression at same time</li>
+                <li>Consider shortest path for compression</li>
+            </ul>
+            <h5> Applications of SED in POSTGRESQL</h5>
+            <img src="media/sedApp.png">
+        </div>
         <div id="module1" class="content cloud">
             <h2>Week 8: Navigating the Maze of High-Dimensional Data</h2>
             <div class="feels">
@@ -76,12 +427,53 @@
                 <h3>Conclusion</h3>
                 <p>Understanding these advanced techniques is crucial for effectively managing and querying high-dimensional data, especially as the size and complexity of datasets continue to grow in modern applications.</p>
             </div>
-            
-    
         </div>
+  
+    <div id="module9" class="content cloud">
+        <h1>Multimedia Databases</h1>
+        
+        <h2>Managing High-Dimensional Data</h2>
+        <p>The lecture begins by addressing the challenges of managing high-dimensional data in multimedia databases, outlining the necessity for robust systems capable of efficient and reliable multimedia data management and retrieval.</p>
+
+        <h2>Multimedia Databases (MMDB)</h2>
+        <p>Multimedia databases allow for the storage and retrieval of multimedia objects, supporting data types like text, audio, graphics, image, animation, and video. This section discusses the generic architecture of a Multimedia Database Management System (MMDBMS), which includes components such as:</p>
+        <ul>
+            <li>Feature extraction</li>
+            <li>Compression</li>
+            <li>Indexing</li>
+            <li>Query feature construction</li>
+            <li>Search engine feedback and results handling</li>
+        </ul>
+
+        <h5>Type</h5>
+
+        <h2>Feature Representations and Abstraction</h2>
+        <p>The lecture details how multimedia data can be abstracted into features for easier handling and storage. This includes:</p>
+        <ul>
+            <li>Color features, histograms, and models (RGB, CMYK, HSV)</li>
+            <li>Texture and shape features</li>
+            <li>Image gradients and edge detection techniques</li>
+            <li>Advanced feature extraction methods like Histogram of Oriented Gradients (HOG), Scale Invariant Feature Transform (SIFT), and neural network-based representations</li>
+        </ul>
+
+        <h2>Approximate Nearest Neighbor Search</h2>
+        <p>Methods for performing efficient searches in multimedia databases are discussed, particularly focusing on approximate nearest neighbor (ANN) search, which is crucial for handling large-scale data.</p>
+
+        <h2>Hashing and Locality-Sensitive Hashing (LSH)</h2>
+        <p>The lecture explores hashing techniques used to quantize feature vectors into binary codes, which improve the efficiency of search operations. The concept of locality-sensitive hashing (LSH) for different distance measures like Euclidean and cosine distances is also introduced.</p>
+
+        <h2>Media Data Abstraction and Retrieval</h2>
+        <p>Discusses how media data is abstracted to low-level representations called features. Techniques for media retrieval, such as content-based image retrieval, are covered along with their associated challenges, such as precision, recall, and the F-score for evaluating retrieval effectiveness.</p>
+
+        <h2>Practical Demonstrations</h2>
+        <p>The lecture includes practical demonstrations on implementing a simple image search engine, demonstrating the real-world application of discussed concepts and techniques.</p>
+
+        <h2>Summary</h2>
+        <p>The session concludes by summarizing key points about multimedia databases, feature abstractions, the architecture of MMDBMS, and retrieval evaluation metrics.</p>
     </div>
 
+</div>
     <script src="https://emma-nipperess.github.io/COMP4702_CONTENT/script.js"></script>
-
+    <script src="otto.js"></script>
 </body>
 </html>

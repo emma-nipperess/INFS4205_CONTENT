@@ -1,0 +1,83 @@
+li {
+    list-style-type: "🦦";
+}
+
+li li {
+    list-style-type:"↪";
+}
+
+dt {
+    font-weight: bold;
+}
+
+h3 {
+    border-top: 1px solid black;
+    padding-top: 5px;
+}
+dt::before {
+    content: '⭐ '; /* Adds a star emoji before the content */
+  }
+  
+  dt::after {
+    content: ' ⭐'; /* Adds a star emoji after the content */
+  }
+  
+
+table {
+    border: 2px solid #000; /* Adds a solid border around the entire table */
+}
+
+th  {
+    text-align: center; /* Centers text horizontally for better readability */
+}
+
+th {
+    height: 50px; /* Sets a minimum height for headers */
+    border: 1px solid gray;
+}
+
+td {
+    height: 40px; /* Sets a minimum height for data cells */
+    border: 1px solid gray;
+}
+
+tbody tr:hover {
+    background-color: #e8e8e8; /* Changes background on row hover */
+  }
+
+thead {
+position: sticky;
+top: 0; /* Keeps the header at the top of the table viewport */
+}
+
+
+@media (max-width: 600px) {
+    table {
+      overflow-x: auto; /* Allows table to scroll horizontally on small screens */
+      display: block;
+    }
+  }
+  
+.genericOtto {
+    background-repeat: no-repeat;
+    background-size: cover; 
+    background-position: center; /* Centers the image in the cell */
+}
+
+.genericOtto ul, .genericOtto p {
+    background-color: rgba(128, 128, 128, 0.5); /* Transparent gray */
+    color: white;
+}
+ .otto {
+    background-image: url(media/otto.jpg);
+ }
+
+ 
+ .otto2 {
+    background-image: url(media/otto2.jpg);
+ }
+
+  
+ .otto3 {
+    background-image: url(media/otto3.jpg);
+ }
